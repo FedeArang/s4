@@ -36,6 +36,7 @@ from models.s4.s4 import S4Block as S4  # Can use full version instead of minima
 from models.s4.s4d import S4D
 from tqdm.auto import tqdm
 
+
 # Dropout broke in PyTorch 1.11
 if tuple(map(int, torch.__version__.split('.')[:2])) == (1, 11):
     print("WARNING: Dropout is bugged in PyTorch 1.11. Results may be worse.")
@@ -144,11 +145,11 @@ else: raise NotImplementedError
 
 # Dataloaders
 trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
+    trainset, batch_size=args.batch_size, shuffle=True)
 valloader = torch.utils.data.DataLoader(
-    valset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+    valset, batch_size=args.batch_size, shuffle=False)
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+    testset, batch_size=args.batch_size, shuffle=False)
 
 class S4Model(nn.Module):
 
@@ -325,7 +326,7 @@ def train():
         )
 
 
-def eval(epoch, dataloader, checkpoint=False):
+def eval(epoch, dataloader, checkpoint=True):
     global best_acc
     model.eval()
     eval_loss = 0
@@ -375,4 +376,3 @@ for epoch in pbar:
     eval(epoch, testloader)
     scheduler.step()
     # print(f"Epoch {epoch} learning rate: {scheduler.get_last_lr()}")
-
